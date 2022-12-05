@@ -9,6 +9,5 @@
         "unordered_map": "c",
         "unordered_set": "c",
         "vector": "c",
-        "available_expressions_analysis.h": "c"
     }
 }
