@@ -511,7 +511,7 @@ typedef struct {
 
 [Data-flow analysis: copy propagation. (uwo.ca)](https://www.csd.uwo.ca/~mmorenom/CS447/Lectures/CodeOptimization.html/node8.html)
 
-如果需要实现该部分内容, 请实现  `src/IR_optimze/copy`_propogation `.c ` 中的 TODO 内容
+如果需要实现该部分内容, 请实现  `src/IR_optimze/copy_propogation.c ` 中的 TODO 内容
 
 ## 根据数据流分析结果进行优化
 
