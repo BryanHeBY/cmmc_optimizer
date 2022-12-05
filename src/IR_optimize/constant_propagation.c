@@ -48,14 +48,19 @@ Fact_get_value_from_IR_val(Map_IR_var_CPValue *fact, IR_val val) {
     else return Fact_get_value_from_IR_var(fact, val.var);
 }
 
+static void
+Fact_update_value(Map_IR_var_CPValue *fact, IR_var var, CPValue val) {
+    if (val.kind == UNDEF) VCALL(*fact, delete, var);
+    else VCALL(*fact, set, var, val);
+}
+
 static bool
 Fact_meet_value(Map_IR_var_CPValue *fact, IR_var var, CPValue val) {
     CPValue old_val = Fact_get_value_from_IR_var(fact, var);
     CPValue new_val = meetValue(old_val, val);
     if(old_val.kind == new_val.kind && old_val.const_val == new_val.const_val)
         return false;
-    if (val.kind == UNDEF) VCALL(*fact, delete, var);
-    else VCALL(*fact, set, var, new_val);
+    Fact_update_value(fact, var, new_val);
     return true;
 }
 
@@ -136,7 +141,7 @@ void ConstantPropagation_transferStmt (ConstantPropagation *t,
         IR_var def = assign_stmt->rd;
         CPValue use_val = Fact_get_value_from_IR_val(fact, assign_stmt->rs);
         /* TODO: solve IR_ASSIGN_STMT
-         * Fact_meet_value(...);
+         * Fact_update_value/Fact_meet_value?(...);
          */
         TODO();
     } else if(stmt->stmt_type == IR_OP_STMT) {
@@ -146,14 +151,14 @@ void ConstantPropagation_transferStmt (ConstantPropagation *t,
         CPValue rs1_val = Fact_get_value_from_IR_val(fact, op_stmt->rs1);
         CPValue rs2_val = Fact_get_value_from_IR_val(fact, op_stmt->rs2);
         /* TODO: solve IR_OP_STMT
-         * Fact_meet_value(...,calculateValue(...));
+         * Fact_update_value/Fact_meet_value?(...,calculateValue(...));
          */
         TODO();
     } else { // Other Stmt with new_def
         IR_var def = VCALL(*stmt, get_def);
         if(def != IR_VAR_NONE) {
             /* TODO: solve stmt with new_def
-             * Fact_meet_value(...);
+             * Fact_update_value/Fact_meet_value?(...);
              */
             TODO();
         }
