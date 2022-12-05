@@ -65,7 +65,7 @@ static Fact_set_var*
 AvailableExpressionsAnalysis_newInitialFact (AvailableExpressionsAnalysis *t) {
     /* TODO:
      * Must/May Analysis ?
-     * InitFact[blk_not_entry] = (Bottom: empty set) / (Top: universal set) / other?
+     * InitFact = (Bottom: empty set) / (Top: universal set) / other?
      * return NEW(Fact_set_var, is_top?);
      */
     TODO();
