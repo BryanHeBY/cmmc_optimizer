@@ -270,18 +270,19 @@ for(
 
 ### IR_stmt 类型
 
-IR_stmt
-
-- IR_op_stmt:     rd := rs1 op rs2
-- IR_assign_stmt: rd := rs
-- IR_load_stmt: rd := *rs_addr
-- IR_store_stmt: *rd_addr = rs
-- IR_call_stmt:   (ARGS argv[argc]{rs1,rs2,...}) rd := CALL func
-- IR_if_stmt:     IF rs1 relop rs2 GOTO true_label ELSE false_label
-- IR_goto_stmt:   GOTO label
-- IR_return_stmt: return rs
-- IR_read_stmt:   READ rd
-- IR_write_stmt:  WRITE rs
+```
+IR_op_stmt:     rd := rs1 op rs2
+IR_assign_stmt: rd := rs
+IR_load_stmt:   rd := *rs_addr
+IR_store_stmt:  *rd_addr = rs
+IR_call_stmt:   (ARGS argv[argc]{rs1,rs2,...})
+                rd := CALL func
+IR_if_stmt:     IF rs1 relop rs2 GOTO true_label ELSE false_label
+IR_goto_stmt:   GOTO label
+IR_return_stmt: return rs
+IR_read_stmt:   READ rd
+IR_write_stmt:  WRITE rs
+```
 
 ## IR结构代码
 
