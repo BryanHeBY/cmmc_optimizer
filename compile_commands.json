@@ -208,6 +208,24 @@
       "-I./include",
       "-O2",
       "-o",
+      "build/obj/./src/IR_optimize/constant_propagation.o",
+      "src/IR_optimize/constant_propagation.c"
+    ],
+    "directory": "/home/hby/git/cmmc_optimizer",
+    "file": "/home/hby/git/cmmc_optimizer/src/IR_optimize/constant_propagation.c",
+    "output": "/home/hby/git/cmmc_optimizer/build/obj/src/IR_optimize/constant_propagation.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-I./src/IR_parse/include",
+      "-I./build/generate/IR_parse",
+      "-I./src/IR_optimize/include",
+      "-I./include",
+      "-O2",
+      "-o",
       "build/obj/./src/IR_optimize/copy_propagation.o",
       "src/IR_optimize/copy_propagation.c"
     ],
@@ -250,24 +268,6 @@
     "directory": "/home/hby/git/cmmc_optimizer",
     "file": "/home/hby/git/cmmc_optimizer/src/IR_optimize/live_variable_analysis.c",
     "output": "/home/hby/git/cmmc_optimizer/build/obj/src/IR_optimize/live_variable_analysis.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/gcc",
-      "-c",
-      "-Wall",
-      "-I./src/IR_parse/include",
-      "-I./build/generate/IR_parse",
-      "-I./src/IR_optimize/include",
-      "-I./include",
-      "-O2",
-      "-o",
-      "build/obj/./src/IR_optimize/constant_propogation.o",
-      "src/IR_optimize/constant_propogation.c"
-    ],
-    "directory": "/home/hby/git/cmmc_optimizer",
-    "file": "/home/hby/git/cmmc_optimizer/src/IR_optimize/constant_propogation.c",
-    "output": "/home/hby/git/cmmc_optimizer/build/obj/src/IR_optimize/constant_propogation.o"
   },
   {
     "arguments": [
