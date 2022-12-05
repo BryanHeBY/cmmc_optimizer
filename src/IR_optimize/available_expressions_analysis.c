@@ -39,10 +39,10 @@ static void AvailableExpressionsAnalysis_teardown(AvailableExpressionsAnalysis *
         RDELETE(Fact_set_var, i->val);
     for_map(IR_block_ptr, Fact_set_var_ptr, i, t->mapOutFact)
         RDELETE(Fact_set_var, i->val);
-    for_map(IR_var, Vec_ptr_IR_var, i, t->map_e_fill)
+    for_map(IR_var, Vec_ptr_IR_var, i, t->mapExprKill)
         DELETE(i->val);
     Map_Expr_IR_var_teardown(&t->mapExpr);
-    Map_IR_var_Vec_ptr_IR_var_teardown(&t->map_e_fill);
+    Map_IR_var_Vec_ptr_IR_var_teardown(&t->mapExprKill);
     Map_IR_block_ptr_Fact_set_var_ptr_teardown(&t->mapInFact);
     Map_IR_block_ptr_Fact_set_var_ptr_teardown(&t->mapOutFact);
 }
@@ -120,8 +120,8 @@ void AvailableExpressionsAnalysis_transferStmt (AvailableExpressionsAnalysis *t,
                                                 Fact_set_var *fact) {
     IR_var def = VCALL(*stmt, get_def);
     // e_kill: kill new_def oprand in the expr
-    if(def != IR_VAR_NONE && VCALL(t->map_e_fill, exist, def)) {
-        Vec_IR_var *killed_expr_var = VCALL(t->map_e_fill, get, def);
+    if(def != IR_VAR_NONE && VCALL(t->mapExprKill, exist, def)) {
+        Vec_IR_var *killed_expr_var = VCALL(t->mapExprKill, get, def);
         for_vec(IR_var, i, *killed_expr_var)
             VCALL(fact->set, delete, *i);
     }
@@ -186,29 +186,29 @@ void AvailableExpressionsAnalysis_init(AvailableExpressionsAnalysis *t) {
     };
     t->vTable = &vTable;
     Map_Expr_IR_var_init(&t->mapExpr);
-    Map_IR_var_Vec_ptr_IR_var_init(&t->map_e_fill);
+    Map_IR_var_Vec_ptr_IR_var_init(&t->mapExprKill);
     Map_IR_block_ptr_Fact_set_var_ptr_init(&t->mapInFact);
     Map_IR_block_ptr_Fact_set_var_ptr_init(&t->mapOutFact);
 }
 
 //// ============================ Optimize ============================
 
-static void map_e_kill_insert(AvailableExpressionsAnalysis *t,
+static void map_expr_kill_insert(AvailableExpressionsAnalysis *t,
                               IR_var use_var,
                               IR_var expr_var) {
     Vec_IR_var *vec_e_kill;
-    if(!VCALL(t->map_e_fill, exist, use_var)) {
+    if(!VCALL(t->mapExprKill, exist, use_var)) {
         vec_e_kill = NEW(Vec_IR_var);
-        VCALL(t->map_e_fill, insert, use_var, vec_e_kill);
-    } else vec_e_kill = VCALL(t->map_e_fill, get, use_var);
+        VCALL(t->mapExprKill, insert, use_var, vec_e_kill);
+    } else vec_e_kill = VCALL(t->mapExprKill, get, use_var);
     VCALL(*vec_e_kill, push_back, expr_var);
 }
 
 static IR_var create_new_expr_var_map(AvailableExpressionsAnalysis *t, Expr expr) {
     IR_var expr_var = ir_var_generator();
     VCALL(t->mapExpr, insert, expr, expr_var);
-    if(!expr.rs1.is_const) map_e_kill_insert(t, expr.rs1.var, expr_var);
-    if(!expr.rs2.is_const) map_e_kill_insert(t, expr.rs2.var, expr_var);
+    if(!expr.rs1.is_const) map_expr_kill_insert(t, expr.rs1.var, expr_var);
+    if(!expr.rs2.is_const) map_expr_kill_insert(t, expr.rs2.var, expr_var);
     return expr_var;
 }
 

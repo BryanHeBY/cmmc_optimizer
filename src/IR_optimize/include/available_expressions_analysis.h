@@ -43,7 +43,7 @@ typedef struct AvailableExpressionsAnalysis {
         void (*printResult) (AvailableExpressionsAnalysis *t, IR_function *func);
     } const *vTable;
     Map_Expr_IR_var mapExpr;
-    Map_IR_var_Vec_ptr_IR_var map_e_fill;
+    Map_IR_var_Vec_ptr_IR_var mapExprKill;
     Map_IR_block_ptr_Fact_set_var_ptr mapInFact, mapOutFact;
 } AvailableExpressionsAnalysis;
 extern void AvailableExpressionsAnalysis_init(AvailableExpressionsAnalysis *t);
