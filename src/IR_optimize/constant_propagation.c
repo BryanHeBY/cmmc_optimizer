@@ -152,7 +152,7 @@ void ConstantPropagation_transferStmt (ConstantPropagation *t,
     } else { // Other Stmt with new_def
         IR_var def = VCALL(*stmt, get_def);
         if(def != IR_VAR_NONE) {
-            /* TODO: solve IR_OP_STMT
+            /* TODO: solve stmt with new_def
              * Fact_meet_value(...);
              */
             TODO();
