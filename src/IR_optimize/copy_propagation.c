@@ -151,6 +151,29 @@ bool CopyPropagation_transferBlock (CopyPropagation *t,
     return updated;
 }
 
+void CopyPropagation_print_result (CopyPropagation *t, IR_function *func) {
+    printf("Function %s: Copy Propagation Result\n", func->func_name);
+    for_list(IR_block_ptr, i, func->blocks) {
+        IR_block *blk = i->val;
+        printf("=================\n");
+        printf("{Block%s %p}\n", blk == func->entry ? "(Entry)" :
+                                 blk == func->exit ? "(Exit)" : "",
+               blk);
+        IR_block_print(blk, stdout);
+        Fact_def_use *in_fact = VCALL(*t, getInFact, blk),
+                *out_fact = VCALL(*t, getOutFact, blk);
+        printf("[In(top:%d)]:  ", in_fact->is_top);
+        for_map(IR_var, IR_var, j, in_fact->def_to_use)
+            printf("{v%u := v%u} ", j->key, j->val);
+        printf("\n");
+        printf("[Out(top:%d)]: ", out_fact->is_top);
+        for_map(IR_var, IR_var, j, out_fact->def_to_use)
+            printf("{v%u := v%u} ", j->key, j->val);
+        printf("\n");
+        printf("=================\n");
+    }
+}
+
 void CopyPropagation_init(CopyPropagation *t) {
     const static struct CopyPropagation_virtualTable vTable = {
             .teardown        = CopyPropagation_teardown,
@@ -163,6 +186,7 @@ void CopyPropagation_init(CopyPropagation *t) {
             .getOutFact      = CopyPropagation_getOutFact,
             .meetInto        = CopyPropagation_meetInto,
             .transferBlock   = CopyPropagation_transferBlock,
+            .printResult     = CopyPropagation_print_result
     };
     t->vTable = &vTable;
     Map_IR_block_ptr_Fact_def_use_ptr_init(&t->mapInFact);
@@ -189,29 +213,6 @@ static void block_replace_available_use_copy (CopyPropagation *t, IR_block *blk)
     }
     RDELETE(Fact_def_use, new_in_fact);
     remove_dead_stmt(blk);
-}
-
-void CopyPropagation_print_result (CopyPropagation *t, IR_function *func) {
-    printf("Function %s: Copy Propagation Result\n", func->func_name);
-    for_list(IR_block_ptr, i, func->blocks) {
-        IR_block *blk = i->val;
-        printf("=================\n");
-        printf("{Block%s %p}\n", blk == func->entry ? "(Entry)" :
-                                 blk == func->exit ? "(Exit)" : "",
-               blk);
-        IR_block_print(blk, stdout);
-        Fact_def_use *in_fact = VCALL(*t, getInFact, blk),
-                *out_fact = VCALL(*t, getOutFact, blk);
-        printf("[In(top:%d)]:  ", in_fact->is_top);
-        for_map(IR_var, IR_var, j, in_fact->def_to_use)
-            printf("{v%u := v%u} ", j->key, j->val);
-        printf("\n");
-        printf("[Out(top:%d)]: ", out_fact->is_top);
-        for_map(IR_var, IR_var, j, out_fact->def_to_use)
-            printf("{v%u := v%u} ", j->key, j->val);
-        printf("\n");
-        printf("=================\n");
-    }
 }
 
 void CopyPropagation_replace_available_use_copy (CopyPropagation *t, IR_function *func) {

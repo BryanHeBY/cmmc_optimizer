@@ -61,7 +61,7 @@ LiveVariableAnalysis_meetInto (LiveVariableAnalysis *t,
                                Set_IR_var *target) {
     /* TODO:
      * meet: union/intersect?
-     * return VCALL(*target, union_with/intersect?, fact);
+     * return VCALL(*target, union_with/intersect_with?, fact);
      */
     TODO();
 }
@@ -105,26 +105,6 @@ bool LiveVariableAnalysis_transferBlock (LiveVariableAnalysis *t,
     return updated;
 }
 
-void LiveVariableAnalysis_init(LiveVariableAnalysis *t) {
-    const static struct LiveVariableAnalysis_virtualTable vTable = {
-            .teardown        = LiveVariableAnalysis_teardown,
-            .isForward       = LiveVariableAnalysis_isForward,
-            .newBoundaryFact = LiveVariableAnalysis_newBoundaryFact,
-            .newInitialFact  = LiveVariableAnalysis_newInitialFact,
-            .setInFact       = LiveVariableAnalysis_setInFact,
-            .setOutFact      = LiveVariableAnalysis_setOutFact,
-            .getInFact       = LiveVariableAnalysis_getInFact,
-            .getOutFact      = LiveVariableAnalysis_getOutFact,
-            .meetInto        = LiveVariableAnalysis_meetInto,
-            .transferBlock   = LiveVariableAnalysis_transferBlock,
-    };
-    t->vTable = &vTable;
-    Map_IR_block_ptr_Set_ptr_IR_var_init(&t->mapInFact);
-    Map_IR_block_ptr_Set_ptr_IR_var_init(&t->mapOutFact);
-}
-
-//// ============================ Optimize ============================
-
 void LiveVariableAnalysis_print_result(LiveVariableAnalysis *t, IR_function *func) {
     printf("Function %s: Live Variable Analysis Result\n", func->func_name);
     for_list(IR_block_ptr, i, func->blocks) {
@@ -147,6 +127,27 @@ void LiveVariableAnalysis_print_result(LiveVariableAnalysis *t, IR_function *fun
         printf("=================\n");
     }
 }
+
+void LiveVariableAnalysis_init(LiveVariableAnalysis *t) {
+    const static struct LiveVariableAnalysis_virtualTable vTable = {
+            .teardown        = LiveVariableAnalysis_teardown,
+            .isForward       = LiveVariableAnalysis_isForward,
+            .newBoundaryFact = LiveVariableAnalysis_newBoundaryFact,
+            .newInitialFact  = LiveVariableAnalysis_newInitialFact,
+            .setInFact       = LiveVariableAnalysis_setInFact,
+            .setOutFact      = LiveVariableAnalysis_setOutFact,
+            .getInFact       = LiveVariableAnalysis_getInFact,
+            .getOutFact      = LiveVariableAnalysis_getOutFact,
+            .meetInto        = LiveVariableAnalysis_meetInto,
+            .transferBlock   = LiveVariableAnalysis_transferBlock,
+            .printResult     = LiveVariableAnalysis_print_result
+    };
+    t->vTable = &vTable;
+    Map_IR_block_ptr_Set_ptr_IR_var_init(&t->mapInFact);
+    Map_IR_block_ptr_Set_ptr_IR_var_init(&t->mapOutFact);
+}
+
+//// ============================ Optimize ============================
 
 static bool block_remove_dead_def (LiveVariableAnalysis *t, IR_block *blk) {
     bool updated = false;

@@ -175,47 +175,6 @@ bool ConstantPropagation_transferBlock (ConstantPropagation *t,
     return updated;
 }
 
-void ConstantPropagation_init(ConstantPropagation *t) {
-    const static struct ConstantPropagation_virtualTable vTable = {
-            .teardown        = ConstantPropagation_teardown,
-            .isForward       = ConstantPropagation_isForward,
-            .newBoundaryFact = ConstantPropagation_newBoundaryFact,
-            .newInitialFact  = ConstantPropagation_newInitialFact,
-            .setInFact       = ConstantPropagation_setInFact,
-            .setOutFact      = ConstantPropagation_setOutFact,
-            .getInFact       = ConstantPropagation_getInFact,
-            .getOutFact      = ConstantPropagation_getOutFact,
-            .meetInto        = ConstantPropagation_meetInto,
-            .transferBlock   = ConstantPropagation_transferBlock,
-    };
-    t->vTable = &vTable;
-    Map_IR_block_ptr_Map_ptr_IR_var_CPValue_init(&t->mapInFact);
-    Map_IR_block_ptr_Map_ptr_IR_var_CPValue_init(&t->mapOutFact);
-}
-
-//// ============================ Optimize ============================
-
-// 常量折叠, 将所有use替换为相应常量
-static void block_constant_folding (ConstantPropagation *t, IR_block *blk) {
-    Map_IR_var_CPValue *blk_in_fact = VCALL(*t, getInFact, blk);
-    Map_IR_var_CPValue *new_in_fact = ConstantPropagation_newInitialFact(t);
-    ConstantPropagation_meetInto(t, blk_in_fact, new_in_fact);
-    for_list(IR_stmt_ptr, i, blk->stmts) {
-        IR_stmt *stmt = i->val;
-        IR_use use = VCALL(*stmt, get_use_vec);
-        for(int j = 0; j < use.use_cnt; j++)
-            if(!use.use_vec[j].is_const) {
-                IR_var use_var = use.use_vec[j].var;
-                CPValue use_CPVal = Fact_get_value_from_IR_var(new_in_fact, use_var);
-                if(use_CPVal.kind == CONST)
-                    use.use_vec[j] = (IR_val){.is_const = true, .const_val = use_CPVal.const_val};
-            }
-        ConstantPropagation_transferStmt(t, stmt, new_in_fact);
-    }
-    RDELETE(Map_IR_var_CPValue, new_in_fact);
-    remove_dead_stmt(blk);
-}
-
 void ConstantPropagation_print_result (ConstantPropagation *t, IR_function *func) {
     printf("Function %s: Constant Propagation Result\n", func->func_name);
     for_list(IR_block_ptr, i, func->blocks) {
@@ -243,6 +202,48 @@ void ConstantPropagation_print_result (ConstantPropagation *t, IR_function *func
         printf("\n");
         printf("=================\n");
     }
+}
+
+void ConstantPropagation_init(ConstantPropagation *t) {
+    const static struct ConstantPropagation_virtualTable vTable = {
+            .teardown        = ConstantPropagation_teardown,
+            .isForward       = ConstantPropagation_isForward,
+            .newBoundaryFact = ConstantPropagation_newBoundaryFact,
+            .newInitialFact  = ConstantPropagation_newInitialFact,
+            .setInFact       = ConstantPropagation_setInFact,
+            .setOutFact      = ConstantPropagation_setOutFact,
+            .getInFact       = ConstantPropagation_getInFact,
+            .getOutFact      = ConstantPropagation_getOutFact,
+            .meetInto        = ConstantPropagation_meetInto,
+            .transferBlock   = ConstantPropagation_transferBlock,
+            .printResult     = ConstantPropagation_print_result
+    };
+    t->vTable = &vTable;
+    Map_IR_block_ptr_Map_ptr_IR_var_CPValue_init(&t->mapInFact);
+    Map_IR_block_ptr_Map_ptr_IR_var_CPValue_init(&t->mapOutFact);
+}
+
+//// ============================ Optimize ============================
+
+// 常量折叠, 将所有use替换为相应常量
+static void block_constant_folding (ConstantPropagation *t, IR_block *blk) {
+    Map_IR_var_CPValue *blk_in_fact = VCALL(*t, getInFact, blk);
+    Map_IR_var_CPValue *new_in_fact = ConstantPropagation_newInitialFact(t);
+    ConstantPropagation_meetInto(t, blk_in_fact, new_in_fact);
+    for_list(IR_stmt_ptr, i, blk->stmts) {
+        IR_stmt *stmt = i->val;
+        IR_use use = VCALL(*stmt, get_use_vec);
+        for(int j = 0; j < use.use_cnt; j++)
+            if(!use.use_vec[j].is_const) {
+                IR_var use_var = use.use_vec[j].var;
+                CPValue use_CPVal = Fact_get_value_from_IR_var(new_in_fact, use_var);
+                if(use_CPVal.kind == CONST)
+                    use.use_vec[j] = (IR_val){.is_const = true, .const_val = use_CPVal.const_val};
+            }
+        ConstantPropagation_transferStmt(t, stmt, new_in_fact);
+    }
+    RDELETE(Map_IR_var_CPValue, new_in_fact);
+    remove_dead_stmt(blk);
 }
 
 void ConstantPropagation_constant_folding (ConstantPropagation *t, IR_function *func) {

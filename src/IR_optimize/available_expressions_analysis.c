@@ -147,6 +147,29 @@ bool AvailableExpressionsAnalysis_transferBlock (AvailableExpressionsAnalysis *t
     return updated;
 }
 
+void AvailableExpressionsAnalysis_print_result (AvailableExpressionsAnalysis *t, IR_function *func) {
+    printf("Function %s: Available Expressions Analysis Result\n", func->func_name);
+    for_list(IR_block_ptr, i, func->blocks) {
+        IR_block *blk = i->val;
+        printf("=================\n");
+        printf("{Block%s %p}\n", blk == func->entry ? "(Entry)" :
+                                 blk == func->exit ? "(Exit)" : "",
+               blk);
+        IR_block_print(blk, stdout);
+        Fact_set_var *in_fact = VCALL(*t, getInFact, blk),
+                     *out_fact = VCALL(*t, getOutFact, blk);
+        printf("[In(top:%d)]:  ", in_fact->is_top);
+        for_set(IR_var, var, in_fact->set)
+            printf("v%u ", var->key);
+        printf("\n");
+        printf("[Out(top:%d)]: ", out_fact->is_top);
+        for_set(IR_var, var, out_fact->set)
+            printf("v%u ", var->key);
+        printf("\n");
+        printf("=================\n");
+    }
+}
+
 void AvailableExpressionsAnalysis_init(AvailableExpressionsAnalysis *t) {
     const static struct AvailableExpressionsAnalysis_virtualTable vTable = {
             .teardown        = AvailableExpressionsAnalysis_teardown,
@@ -159,6 +182,7 @@ void AvailableExpressionsAnalysis_init(AvailableExpressionsAnalysis *t) {
             .getOutFact      = AvailableExpressionsAnalysis_getOutFact,
             .meetInto        = AvailableExpressionsAnalysis_meetInto,
             .transferBlock   = AvailableExpressionsAnalysis_transferBlock,
+            .printResult     = AvailableExpressionsAnalysis_print_result
     };
     t->vTable = &vTable;
     Map_Expr_IR_var_init(&t->mapExpr);
@@ -289,29 +313,6 @@ static void block_remove_available_expr_def (AvailableExpressionsAnalysis *t, IR
     }
     RDELETE(Fact_set_var, new_in_fact);
     remove_dead_stmt(blk);
-}
-
-void AvailableExpressionsAnalysis_print_result (AvailableExpressionsAnalysis *t, IR_function *func) {
-    printf("Function %s: Available Expressions Analysis Result\n", func->func_name);
-    for_list(IR_block_ptr, i, func->blocks) {
-        IR_block *blk = i->val;
-        printf("=================\n");
-        printf("{Block%s %p}\n", blk == func->entry ? "(Entry)" :
-                                 blk == func->exit ? "(Exit)" : "",
-               blk);
-        IR_block_print(blk, stdout);
-        Fact_set_var *in_fact = VCALL(*t, getInFact, blk),
-                     *out_fact = VCALL(*t, getOutFact, blk);
-        printf("[In(top:%d)]:  ", in_fact->is_top);
-        for_set(IR_var, var, in_fact->set)
-            printf("v%u ", var->key);
-        printf("\n");
-        printf("[Out(top:%d)]: ", out_fact->is_top);
-        for_set(IR_var, var, out_fact->set)
-            printf("v%u ", var->key);
-        printf("\n");
-        printf("=================\n");
-    }
 }
 
 void AvailableExpressionsAnalysis_remove_available_expr_def (AvailableExpressionsAnalysis *t, IR_function *func) {

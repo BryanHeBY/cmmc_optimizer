@@ -26,6 +26,7 @@ struct DataflowAnalysis {
         Fact *(*getOutFact) (DataflowAnalysis *t, IR_block *blk);
         bool (*meetInto) (DataflowAnalysis *t, Fact *fact, Fact *target);
         bool (*transferBlock) (DataflowAnalysis *t, IR_block *block, Fact *in_fact, Fact *out_fact);
+        void (*printResult) (DataflowAnalysis *t, IR_function *func);
     } const *vTable;
 };
 

@@ -34,6 +34,7 @@ typedef struct ConstantPropagation {
         Map_IR_var_CPValue *(*getOutFact) (ConstantPropagation *t, IR_block *blk);
         bool (*meetInto) (ConstantPropagation *t, Map_IR_var_CPValue *fact, Map_IR_var_CPValue *target);
         bool (*transferBlock) (ConstantPropagation *t, IR_block *block, Map_IR_var_CPValue *in_fact, Map_IR_var_CPValue *out_fact);
+        void (*printResult) (ConstantPropagation *t, IR_function *func);
     } const *vTable;
     Map_IR_block_ptr_Map_ptr_IR_var_CPValue mapInFact, mapOutFact;
 } ConstantPropagation;

@@ -45,7 +45,7 @@ void IR_optimize() {
 
             constantPropagation = NEW(ConstantPropagation);
             worklist_solver((DataflowAnalysis*)constantPropagation, func);
-            // ConstantPropagation_print_result(constantPropagation, func);
+            // VCALL(*constantPropagation, printResult, func);
             ConstantPropagation_constant_folding(constantPropagation, func);
             DELETE(constantPropagation);
 
@@ -54,7 +54,7 @@ void IR_optimize() {
             availableExpressionsAnalysis = NEW(AvailableExpressionsAnalysis);
             AvailableExpressionsAnalysis_merge_common_expr(availableExpressionsAnalysis, func);
             worklist_solver((DataflowAnalysis*)availableExpressionsAnalysis, func); // 将子类强制转化为父类
-            // AvailableExpressionsAnalysis_print_result(availableExpressionsAnalysis, func);
+            // VCALL(*availableExpressionsAnalysis, printResult, func);
             AvailableExpressionsAnalysis_remove_available_expr_def(availableExpressionsAnalysis, func);
             DELETE(availableExpressionsAnalysis);
 
@@ -62,7 +62,7 @@ void IR_optimize() {
 
             copyPropagation = NEW(CopyPropagation);
             worklist_solver((DataflowAnalysis*)copyPropagation, func);
-            // CopyPropagation_print_result(copyPropagation, func);
+            // VCALL(*copyPropagation, printResult, func);
             CopyPropagation_replace_available_use_copy(copyPropagation, func);
             DELETE(copyPropagation);
         }
@@ -72,7 +72,7 @@ void IR_optimize() {
 
         constantPropagation = NEW(ConstantPropagation);
         worklist_solver((DataflowAnalysis*)constantPropagation, func);
-        // ConstantPropagation_print_result(constantPropagation, func);
+        // VCALL(*constantPropagation, printResult, func);
         ConstantPropagation_constant_folding(constantPropagation, func);
         DELETE(constantPropagation);
 
@@ -81,7 +81,7 @@ void IR_optimize() {
         while(true) {
             liveVariableAnalysis = NEW(LiveVariableAnalysis);
             worklist_solver((DataflowAnalysis*)liveVariableAnalysis, func); // 将子类强制转化为父类
-            // LiveVariableAnalysis_print_result(liveVariableAnalysis, func);
+            // VCALL(*liveVariableAnalysis, printResult, func);
             bool updated = LiveVariableAnalysis_remove_dead_def(liveVariableAnalysis, func);
             DELETE(liveVariableAnalysis);
             if(!updated) break;

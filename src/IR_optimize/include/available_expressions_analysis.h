@@ -40,6 +40,7 @@ typedef struct AvailableExpressionsAnalysis {
         Fact_set_var *(*getOutFact) (AvailableExpressionsAnalysis *t, IR_block *blk);
         bool (*meetInto) (AvailableExpressionsAnalysis *t, Fact_set_var *fact, Fact_set_var *target);
         bool (*transferBlock) (AvailableExpressionsAnalysis *t, IR_block *block, Fact_set_var *in_fact, Fact_set_var *out_fact);
+        void (*printResult) (AvailableExpressionsAnalysis *t, IR_function *func);
     } const *vTable;
     Map_Expr_IR_var mapExpr;
     Map_IR_var_Vec_ptr_IR_var map_e_fill;

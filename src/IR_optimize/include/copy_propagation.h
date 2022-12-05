@@ -31,6 +31,7 @@ typedef struct CopyPropagation {
         Fact_def_use *(*getOutFact) (CopyPropagation *t, IR_block *blk);
         bool (*meetInto) (CopyPropagation *t, Fact_def_use *fact, Fact_def_use *target);
         bool (*transferBlock) (CopyPropagation *t, IR_block *block, Fact_def_use *in_fact, Fact_def_use *out_fact);
+        void (*printResult) (CopyPropagation *t, IR_function *func);
     } const *vTable;
     Map_IR_block_ptr_Fact_def_use_ptr mapInFact, mapOutFact;
 } CopyPropagation;
