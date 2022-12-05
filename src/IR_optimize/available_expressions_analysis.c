@@ -55,7 +55,7 @@ AvailableExpressionsAnalysis_isForward (AvailableExpressionsAnalysis *t) {
 static Fact_set_var*
 AvailableExpressionsAnalysis_newBoundaryFact (AvailableExpressionsAnalysis *t, IR_function *func) {
     /* TODO:
-     * OutFact[blk_not_entry] = (Bottom: empty set) / (Top: universal set) / other?
+     * OutFact[Entry] = (Bottom: empty set) / (Top: universal set) / other?
      * return NEW(Fact_set_var, is_top?);
      */
     TODO();
