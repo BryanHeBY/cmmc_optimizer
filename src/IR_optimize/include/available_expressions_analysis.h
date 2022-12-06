@@ -14,6 +14,7 @@ typedef struct {
 extern int Expr_CMP(Expr a, Expr b);
 DEF_MAP_CMP(Expr, IR_var, Expr_CMP)
 
+// 为了避免赋值为全集时需要插入所有元素, 这里用is_top代表全集(TOP), 但set中暂时为空集
 typedef struct {
     bool is_top;
     Set_IR_var set;
