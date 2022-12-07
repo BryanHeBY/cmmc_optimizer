@@ -9,7 +9,7 @@
 
 typedef struct {
     enum {
-        UNDEF, CONST, NAC
+        UNDEF, CONST, NAC // 未定义, 常量, 非常量
     } kind;
     int const_val;
 } CPValue;

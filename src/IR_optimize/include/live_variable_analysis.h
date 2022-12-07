@@ -22,7 +22,7 @@ typedef struct LiveVariableAnalysis {
         bool (*transferBlock) (LiveVariableAnalysis *t, IR_block *block, Set_IR_var *in_fact, Set_IR_var *out_fact);
         void (*printResult) (LiveVariableAnalysis *t, IR_function *func);
     } const *vTable;
-    Map_IR_block_ptr_Set_ptr_IR_var mapInFact, mapOutFact;
+    Map_IR_block_ptr_Set_ptr_IR_var mapInFact, mapOutFact; // Fact 为变量的集合
 } LiveVariableAnalysis;
 extern void LiveVariableAnalysis_init(LiveVariableAnalysis *t);
 extern void LiveVariableAnalysis_transferStmt (LiveVariableAnalysis *t,

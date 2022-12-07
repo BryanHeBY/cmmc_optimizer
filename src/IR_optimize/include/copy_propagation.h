@@ -9,6 +9,9 @@
 
 DEF_MAP(IR_var, IR_var)
 
+/* 为了避免赋值为全集时需要插入所有元素, 这里用is_top代表全集(TOP), 但set中暂时为空集
+ * def := use 属于 Fact 当且仅当 def_to_use[def] = use 且 use_to_def[use] = def
+ */
 typedef struct {
     bool is_top;
     Map_IR_var_IR_var def_to_use, use_to_def;
