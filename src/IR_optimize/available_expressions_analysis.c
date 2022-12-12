@@ -312,7 +312,7 @@ static void block_remove_available_expr_def (AvailableExpressionsAnalysis *t, IR
         AvailableExpressionsAnalysis_transferStmt(t, stmt, new_in_fact);
     }
     RDELETE(Fact_set_var, new_in_fact);
-    remove_dead_stmt(blk);
+    remove_dead_stmt(blk); // 删除标记为 dead 的可用表达式赋值
 }
 
 void AvailableExpressionsAnalysis_remove_available_expr_def (AvailableExpressionsAnalysis *t, IR_function *func) {

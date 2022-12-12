@@ -212,7 +212,6 @@ static void block_replace_available_use_copy (CopyPropagation *t, IR_block *blk)
         CopyPropagation_transferStmt(t, stmt, new_in_fact);
     }
     RDELETE(Fact_def_use, new_in_fact);
-    remove_dead_stmt(blk);
 }
 
 void CopyPropagation_replace_available_use_copy (CopyPropagation *t, IR_function *func) {

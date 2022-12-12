@@ -248,7 +248,6 @@ static void block_constant_folding (ConstantPropagation *t, IR_block *blk) {
         ConstantPropagation_transferStmt(t, stmt, new_in_fact);
     }
     RDELETE(Map_IR_var_CPValue, new_in_fact);
-    remove_dead_stmt(blk);
 }
 
 void ConstantPropagation_constant_folding (ConstantPropagation *t, IR_function *func) {

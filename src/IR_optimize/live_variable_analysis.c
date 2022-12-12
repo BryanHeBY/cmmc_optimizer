@@ -171,7 +171,7 @@ static bool block_remove_dead_def (LiveVariableAnalysis *t, IR_block *blk) {
         LiveVariableAnalysis_transferStmt(t, stmt, new_out_fact);
     }
     DELETE(new_out_fact);
-    remove_dead_stmt(blk);
+    remove_dead_stmt(blk); // 删除标记为 dead 的变量赋值, 完成死代码消除工作
     return updated;
 }
 
