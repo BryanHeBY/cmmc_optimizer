@@ -1,6 +1,6 @@
 # 实验五代码框架
 
-注意: 实验框架会随时更新注释和修补bug, 请定期从远程仓库执行pull, 最近一次代码更新时间为 12 月 6 日
+注意: 实验框架会随时更新注释和修补bug, 请定期从远程仓库执行pull, 最近一次代码更新时间为 12 月 28 日
 
 希望大家能够帮助补充相关注释. 发现bug, 提供建议, 可联系助教和hby.
 
@@ -479,9 +479,39 @@ typedef struct {
 
 ## 数据流分析求解算法框架
 
+框架代码将每个数据流分析抽象成了对应的子类, 并使用统一的求解器进行求解
+
+以活跃变量分析为例, 其主要提供的方法为
+
+```c
+typedef struct LiveVariableAnalysis {
+    struct LiveVariableAnalysis_virtualTable {
+        bool (*isForward) (LiveVariableAnalysis *t); // 前向/后向数据流分析?
+        Set_IR_var *(*newBoundaryFact) (LiveVariableAnalysis *t, IR_function *func);
+        Set_IR_var *(*newInitialFact) (LiveVariableAnalysis *t);
+        bool (*meetInto) (LiveVariableAnalysis *t, Set_IR_var *fact, Set_IR_var *target);
+        bool (*transferBlock) (LiveVariableAnalysis *t, IR_block *block, Set_IR_var *in_fact, Set_IR_var *out_fact);
+        // 若结果发生改变则返回true
+        ...
+    } const *vTable;
+} LiveVariableAnalysis;
+```
+
+若使用迭代求解器求解, 求解器算法如下
+
+![迭代求解器](https://tai-e.pascal-lab.net/pa1/iter-alg.png)
+
+此处 `meetInto()` 的设计可能与你设想的稍有差别：它接受 `fact` 和 `target` 两个参数并把 `fact` 集合并入 `target` 集合。这个函数有什么用呢？考虑一下上图中 `meetInto()` 附近的那行伪代码，它会取出 `B` 的所有后继，然后把它们 `IN facts` 的并集赋给 `OUT[B]`。如果这行代码用 `meetInto()` 来实现，那么我们就可以根据下图所示，用 `meetInto(IN[S], OUT[B])` 把 `B` 的每个后继 `S` 的 `IN fact` 直接并入到 `OUT[B]` 中：
+
+![MeetInto Example](https://tai-e.pascal-lab.net/pa1/meetinto-example.png)
+
+这样设计 `meetInto()` 是出于效率考量。首先，在一个控制流合并节点多次调用 `meetInto()` 时，我们都在改写同一个对象。这样，我们可以避免像伪代码 `OUT[S] = U…` 所描述的那样，每次合并两个集合就会创建出一个新的 `SetFact` 对象保存结果。当然，为了实现上面所说的 meet 策略，你需要在初始化阶段给每条语句的 `OUT[S]` 赋上和 `IN[S]` 一样的初值。
+
 在  `src/IR_optimze/solver.c` 中, 前向分析的迭代求解器与worklist求解器代码已给出实现. 请实现后向分析的 TODO 内容
 
 ## 数据流分析具体应用
+
+建议完成活跃变量分析和常量传播的数据流分析应用实现. 同时, 每个数据流分析都提供了结果输出函数用来进行debug
 
 ### 活跃变量分析
 

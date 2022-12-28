@@ -49,9 +49,9 @@ static void worklistDoSolveForward(DataflowAnalysis *t, IR_function *func) {
     for_list(IR_block_ptr, i, func->blocks)
         VCALL(worklist, push_back, i->val);
     while(worklist.tail != NULL) {
-        // 从worklist中取出 blk
-        IR_block *blk = worklist.tail->val;
-        VCALL(worklist, pop_back);
+        // 从worklist的头部中取出 blk
+        IR_block *blk = worklist.head->val;
+        VCALL(worklist, pop_front);
         // 获取 IN[blk] 与 OUT[blk]
         Fact *in_fact = VCALL(*t, getInFact, blk), *out_fact = VCALL(*t, getOutFact, blk);
         // IN[blk] = meetAll(OUT[pred] for pred in AllPred[blk])
