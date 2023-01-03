@@ -60,7 +60,7 @@ static void worklistDoSolveForward(DataflowAnalysis *t, IR_function *func) {
             Fact *pred_out_fact = VCALL(*t, getOutFact, pred);
             VCALL(*t, meetInto, pred_out_fact, in_fact);
         }
-        // 若OUT[blk]发生update, 则将其前驱全部加入 worklist
+        // 若OUT[blk]发生update, 则将其后继全部加入 worklist
         if(VCALL(*t, transferBlock, blk, in_fact, out_fact))
             for_list(IR_block_ptr, i, *VCALL(func->blk_succ, get, blk))
                 VCALL(worklist, push_back, i->val);
