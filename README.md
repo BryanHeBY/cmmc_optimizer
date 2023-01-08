@@ -336,8 +336,6 @@ struct IR_stmt_virtualTable {
     IR_use (*get_use_vec) (IR_stmt *stmt);
 };
 
-#define CLASS_IR_stmt 
-
 struct IR_stmt {
     struct {
         struct IR_stmt_virtualTable const *vTable;
