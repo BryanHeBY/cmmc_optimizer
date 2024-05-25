@@ -84,9 +84,9 @@ static void IR_store_stmt_print(IR_stmt *stmt, FILE *out) {
 
 static void IR_call_stmt_print(IR_stmt *stmt, FILE *out) {
     IR_call_stmt *call_stmt = (IR_call_stmt*)stmt;
-    for(unsigned i = call_stmt->argc; i != 0; i --) {
+    for(unsigned i = 0; i != call_stmt->argc; i ++) {
         fprintf(out, "ARG ");
-        IR_val_print(call_stmt->argv[i - 1], out);
+        IR_val_print(call_stmt->argv[i], out);
         fprintf(out, "\n");
     }
     fprintf(out, "v%u := CALL %s\n",
